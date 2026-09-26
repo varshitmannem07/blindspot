@@ -131,9 +131,6 @@ sample-resumes/          Five fictional résumés covering each outcome
 
 Built with React, Vite, Tailwind CSS, Lucide icons, pdf.js and mammoth. Every push runs lint, formatting checks, tests and a build in [GitHub Actions](https://github.com/varshitmannem07/blindspot/actions), then deploys the live demo to GitHub Pages.
 
-## Team
-
-Built by [@varshitmannem07](https://github.com/varshitmannem07).
 
 ## License
 
