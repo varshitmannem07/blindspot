@@ -28,7 +28,14 @@ async function pdfToText(file) {
     }
     rows
       .sort((a, b) => b.y - a.y)
-      .forEach((r) => out.push(r.parts.sort((a, b) => a.x - b.x).map((q) => q.s).join(" ")));
+      .forEach((r) =>
+        out.push(
+          r.parts
+            .sort((a, b) => a.x - b.x)
+            .map((q) => q.s)
+            .join(" ")
+        )
+      );
   }
   return out.join("\n");
 }

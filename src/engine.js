@@ -65,7 +65,10 @@ export const JOBS = {
 const EDUCATION =
   /(university|college|school|academy|institute|bachelor|master|ph\.?d|bootcamp|certificate|diploma|gpa|\bb\.s\.|\bm\.s\.|\bb\.?tech|\bm\.?tech|\bb\.?sc|\bm\.?sc)/i;
 const MONTH = "(?:[A-Za-z]{3,9}\\.?\\s+|\\d{1,2}\\/)?";
-const DATE_RANGE = new RegExp(`\\b${MONTH}((?:19|20)\\d{2})\\s*(?:[–—-]|to)\\s*${MONTH}((?:19|20)\\d{2}|present|now|current)\\b`, "gi");
+const DATE_RANGE = new RegExp(
+  `\\b${MONTH}((?:19|20)\\d{2})\\s*(?:[–—-]|to)\\s*${MONTH}((?:19|20)\\d{2}|present|now|current)\\b`,
+  "gi"
+);
 
 function parseYears(lines) {
   let total = 0;
@@ -96,7 +99,12 @@ export function evaluateRequirements(text, job) {
   return job.requirements.map((r) => {
     if (r.type === "years") {
       const credit = Math.min(1, years / r.min);
-      return { ...r, credit, met: credit >= 1, evidence: years ? `${years} year${years === 1 ? "" : "s"}` : "Not listed" };
+      return {
+        ...r,
+        credit,
+        met: credit >= 1,
+        evidence: years ? `${years} year${years === 1 ? "" : "s"}` : "Not listed",
+      };
     }
     if (r.type === "gpa") {
       const credit = gpa != null && gpa >= r.min ? 1 : 0;
@@ -232,14 +240,23 @@ function findLocation(lines) {
 export function detectAttributes(text) {
   const lines = toLines(text);
   const found = [];
-  if (lines[0]) found.push({ cat: "name", kind: "name", line: 0, start: 0, end: lines[0].length, text: lines[0], label: "Name" });
+  if (lines[0])
+    found.push({ cat: "name", kind: "name", line: 0, start: 0, end: lines[0].length, text: lines[0], label: "Name" });
   const loc = findLocation(lines);
   if (loc) found.push({ cat: "geo", kind: "location", ...loc, label: "Location" });
   lines.forEach((line, i) => {
     if (i === 0) return;
     if (loc && i === loc.line && loc.start === 0 && loc.end === line.length) return;
     if (SCHOOL_LINE.test(line) && !/(university|college)/i.test(line)) {
-      found.push({ cat: "geo", kind: "school", line: i, start: 0, end: line.length, text: line, label: "Secondary school" });
+      found.push({
+        cat: "geo",
+        kind: "school",
+        line: i,
+        start: 0,
+        end: line.length,
+        text: line,
+        label: "Secondary school",
+      });
       return;
     }
     for (const m of line.matchAll(GENDER_TERMS)) {
@@ -288,14 +305,20 @@ const GENDER_SWAPS = [
 
 function swapGender(text) {
   return applyToLines(text, (line, i) =>
-    i === 0 ? line : GENDER_SWAPS.reduce((l, [re, to]) => l.replace(re, (m) => (m[0] === m[0].toUpperCase() ? cap(to) : to)), line)
+    i === 0
+      ? line
+      : GENDER_SWAPS.reduce((l, [re, to]) => l.replace(re, (m) => (m[0] === m[0].toUpperCase() ? cap(to) : to)), line)
   );
 }
 
 function augmentMissing(missing) {
   return missing
     .map((r) =>
-      r.type === "years" ? `${r.min} years experience` : r.type === "gpa" ? `GPA ${(r.min + 0.3).toFixed(1)}` : `Skills: ${r.terms[0]}`
+      r.type === "years"
+        ? `${r.min} years experience`
+        : r.type === "gpa"
+          ? `GPA ${(r.min + 0.3).toFixed(1)}`
+          : `Skills: ${r.terms[0]}`
     )
     .join("\n");
 }
@@ -316,7 +339,11 @@ export function runAudit(text, job) {
     effect[cat] = r1(s - original);
     variants.push({ label: `Neutralize ${CAT_PHRASE[cat]}`, score: s });
   }
-  if (cats.includes("gender")) variants.push({ label: "Swap gendered terms (e.g. women's → men's)", score: r1(modelScore(swapGender(text), job).score) });
+  if (cats.includes("gender"))
+    variants.push({
+      label: "Swap gendered terms (e.g. women's → men's)",
+      score: r1(modelScore(swapGender(text), job).score),
+    });
   if (cats.includes("name")) {
     const swapped = applyToLines(text, (l, i) => (i === 0 ? "Alex Morgan" : l));
     variants.push({ label: "Swap name → “Alex Morgan”", score: r1(modelScore(swapped, job).score) });
@@ -346,8 +373,8 @@ export function runAudit(text, job) {
       c === "gender"
         ? genderTokens.map((t) => `“${t}”`)
         : c === "name"
-        ? ["the candidate's name"]
-        : [geoKinds.has("location") && "location", geoKinds.has("school") && "secondary school"].filter(Boolean)
+          ? ["the candidate's name"]
+          : [geoKinds.has("location") && "location", geoKinds.has("school") && "secondary school"].filter(Boolean)
     );
     return parts.length < 3 ? parts.join(" and ") : `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
   };
@@ -365,11 +392,14 @@ export function runAudit(text, job) {
     finding = `Neutralizing ${describe(drivers)} raised the score from ${original.toFixed(1)} to ${adjusted.toFixed(
       1
     )} with no change to qualifications. The original score was driven by ${cause}, not by qualifications.`;
-    verdictCode = drivers[0] === "gender" ? "SYSTEMIC DEMOGRAPHIC PENALTY INTERCEPTED" : "NAME / GEO PROXY PENALTY INTERCEPTED";
+    verdictCode =
+      drivers[0] === "gender" ? "SYSTEMIC DEMOGRAPHIC PENALTY INTERCEPTED" : "NAME / GEO PROXY PENALTY INTERCEPTED";
   } else {
     const passed = original >= PASS_SCORE;
     finding = `Neutralizing ${describe(cats)} ${delta === 0 ? "did not change the score" : `changed the score by only ${Math.abs(delta).toFixed(1)}`}. ${
-      passed ? "The score is not driven by personal attributes." : "The low score reflects unmet role requirements, not personal attributes."
+      passed
+        ? "The score is not driven by personal attributes."
+        : "The low score reflects unmet role requirements, not personal attributes."
     }`;
     verdictCode = passed ? "NO SYSTEMIC BIAS DETECTED" : "NO SYSTEMIC BIAS DETECTED — REJECTION UPHELD";
   }

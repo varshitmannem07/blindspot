@@ -10,13 +10,13 @@
 
 Then drag the files from [`sample-resumes/`](sample-resumes) onto the window, or open one of the three pre-loaded candidates and click **Run Bias Audit**.
 
-| Sample | Result |
-|---|---|
-| `1_Priya_Raman_Cloud_Architect.pdf` | Bias detected (name + location): 2.1 → 4.9 |
-| `2_Jamal_Washington_Backend.pdf` | Bias detected (name): 2.8 → 4.9 |
-| `3_Sarah_Mitchell_Backend.docx` | Bias detected ("Girls Who Code"): 2.6 → 4.9 |
-| `4_Daniel_Brooks_Backend.pdf` | No bias: strong candidate, auto-advanced (4.9) |
-| `5_Kevin_Park_Backend.txt` | No bias: under-qualified, decline recommended (1.4) |
+| Sample                              | Result                                              |
+| ----------------------------------- | --------------------------------------------------- |
+| `1_Priya_Raman_Cloud_Architect.pdf` | Bias detected (name + location): 2.1 → 4.9          |
+| `2_Jamal_Washington_Backend.pdf`    | Bias detected (name): 2.8 → 4.9                     |
+| `3_Sarah_Mitchell_Backend.docx`     | Bias detected ("Girls Who Code"): 2.6 → 4.9         |
+| `4_Daniel_Brooks_Backend.pdf`       | No bias: strong candidate, auto-advanced (4.9)      |
+| `5_Kevin_Park_Backend.txt`          | No bias: under-qualified, decline recommended (1.4) |
 
 All names and contact details in the samples are fictional.
 
@@ -40,10 +40,10 @@ npm run dev      # development server
 npm run build    # creates dist/index.html, the single-file offline app
 ```
 
-| File | Purpose |
-|---|---|
-| `src/engine.js` | Simulated ATS scoring model and the BLINDSPOT counterfactual audit |
-| `src/extract.js` | In-browser text extraction from PDF (pdf.js) and Word (mammoth) |
-| `src/App.jsx` | The recruiter console UI (React + Tailwind CSS) |
+| File             | Purpose                                                            |
+| ---------------- | ------------------------------------------------------------------ |
+| `src/engine.js`  | Simulated ATS scoring model and the BLINDSPOT counterfactual audit |
+| `src/extract.js` | In-browser text extraction from PDF (pdf.js) and Word (mammoth)    |
+| `src/App.jsx`    | The recruiter console UI (React + Tailwind CSS)                    |
 
 Built with React, Vite, Tailwind CSS, Lucide icons, pdf.js and mammoth.
