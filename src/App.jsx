@@ -473,7 +473,7 @@ export default function App() {
                   <tbody className="divide-y divide-zinc-800/70">
                     {log.map((e, i) => (
                       <tr key={i} className="align-top">
-                        <td className="w-16 py-2 pr-3 tabular-nums text-zinc-500">{e.t}</td>
+                        <td className="w-24 whitespace-nowrap py-2 pr-3 tabular-nums text-zinc-500">{e.t}</td>
                         <td className="w-44 py-2 pr-3 text-zinc-300">{e.candidate}</td>
                         <td className="py-2">
                           <div className="text-zinc-200">{e.msg}</div>
